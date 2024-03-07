@@ -23,7 +23,7 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-8 text-4xl font-bold text-center"
           >
-            COFFESITE
+            COFFEESITE
             
           </motion.h1>
           <div className="flex justify-center mb-8">

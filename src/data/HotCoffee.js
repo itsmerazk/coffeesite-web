@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 function HotCoffee() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true); 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const getData = async () => {
     try {
@@ -20,6 +22,20 @@ function HotCoffee() {
     getData();
   }, []);
 
+  useEffect(() => {
+    const results = data.filter(coffee =>
+      coffee.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  }, [searchTerm, data]);
+
+  const handleSearch = () => {
+    const results = data.filter(coffee =>
+      coffee.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <nav className="flex items-center justify-between p-4 bg-gray-800">
@@ -31,27 +47,38 @@ function HotCoffee() {
             Menu
             <div className="absolute px-4 py-2 mt-2 bg-gray-800 rounded-lg shadow-lg">
               <ul>
-                <li className="text-white cursor-pointer hover:text-gray-300">
+                <li>
                   <Link to="/IceCoffee" className="text-white hover:text-gray-300">Ice Coffee</Link>
                 </li>
-                <li className="text-white cursor-pointer hover:text-gray-300">
+                <li>
                   <Link to="/HotCoffee" className="text-white hover:text-gray-300">Hot Coffee</Link>
                 </li>
               </ul>
             </div>
           </div>
           <div className="text-white cursor-pointer">
-          <Link to="/ContactUs">Contact</Link>
+            <Link to="/ContactUs">Contact</Link>
           </div>
         </div>
       </nav>
+
+      <div className="flex p-4">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="px-4 py-2 mr-2 border rounded-md"
+        />
+        <button onClick={handleSearch} className="px-4 py-2 text-white bg-blue-500 rounded-md">Search</button>
+      </div>
 
       <div className="flex items-center justify-center flex-grow">
         {loading && <div className="text-center">Loading...</div>}
 
         {!loading && (
           <div className="grid grid-cols-1 gap-6 mx-4 mt-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {data.map((coffee, index) => (
+            {searchResults.map((coffee, index) => (
               <div key={index} className="p-4 bg-white rounded-lg shadow-lg">
                 <img src={coffee.image} alt={coffee.title} className="object-cover w-full h-40 mb-4 rounded-lg" />
                 <h2 className="mb-2 text-xl font-semibold">{coffee.title}</h2>

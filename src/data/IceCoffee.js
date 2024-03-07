@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 function IceCoffee() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true); 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const getData = async () => {
     try {
@@ -19,6 +21,20 @@ function IceCoffee() {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    const results = data.filter(coffee =>
+      coffee.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  }, [searchTerm, data]);
+
+  const handleSearch = () => {
+    const results = data.filter(coffee =>
+      coffee.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -41,11 +57,23 @@ function IceCoffee() {
             </div>
           </div>
           <div className="text-white cursor-pointer">
-          <Link to="/ContactUs">Contact</Link></div>
+            <Link to="/ContactUs">Contact</Link>
+          </div>
         </div>
       </nav>
 
-      <div className="flex flex-wrap justify-center mt-10">
+      <div className="flex p-4">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="px-4 py-2 mr-2 border rounded-md"
+        />
+        <button onClick={handleSearch} className="px-4 py-2 text-white bg-blue-500 rounded-md">Search</button>
+      </div>
+
+      <div className="flex flex-wrap justify-center mt-2">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75">
             <div className="text-center">Loading...</div>
@@ -53,7 +81,7 @@ function IceCoffee() {
         )}
         
         {!loading && (
-          data.map((coffee, index) => (
+          searchResults.map((coffee, index) => (
             <div key={index} className="w-full p-4 md:w-1/2 lg:w-1/3 xl:w-1/4">
               <div className="bg-white rounded-lg shadow-lg">
                 <img src={coffee.image} alt={coffee.title} className="object-cover w-full h-40 rounded-t-lg" />
